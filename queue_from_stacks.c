@@ -3,8 +3,8 @@
  * a queue using two stacks.  Make sure to add your name and @oregonstate.edu
  * email address below:
  *
- * Name:
- * Email:
+ * Name: Greggory Hickman
+ * Email: hickmang@oregonstate.edu
  */
 
 #include <stdio.h>
