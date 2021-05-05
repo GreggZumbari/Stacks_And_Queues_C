@@ -17,7 +17,10 @@
  * your queue and return a pointer to the queue structure.
  */
 struct queue_from_stacks* queue_from_stacks_create() {
-  return NULL;
+  //This is the queue that will be returned
+  struct queue_from_stacks* queue = malloc(sizeof(struct queue_from_stacks));
+  
+
 }
 
 /*
@@ -29,7 +32,12 @@ struct queue_from_stacks* queue_from_stacks_create() {
  *     exit the program with an error if queue is NULL.
  */
 void queue_from_stacks_free(struct queue_from_stacks* queue) {
+  assert(queue);
 
+  //Free the 2 stacks inside the struct, then the struct itself
+  stack_free(queue->s1);
+  stack_free(queue->s2);
+  free(queue);
 }
 
 /*
