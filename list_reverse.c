@@ -26,7 +26,7 @@
 struct node* list_reverse(struct node* first) {
   struct node* current = first;
 
-  int length = 1;
+  int length = 0;
   //Get the length of the list, 1st iteration through the list
   while (current->next != NULL) {
     current = current->next;
@@ -36,20 +36,19 @@ struct node* list_reverse(struct node* first) {
   current = first;
   int listValues[length];
   //Fill in listValues with the list's values, 2nd iteration
-  for (int i = 0; current->next != NULL; i++) {
+  for (int i = 0; current != NULL; i++) {
     listValues[i] = current->value;
     current = current->next;
   }
 
   current = first;
-  //Reverse the list, 3rd iteration
+  //Enter the list values in reverse, 3rd iteration
   if (length > 1) {
-    for (int i = 0; i < length - 1; i++) {
+    for (int i = 0; i < length + 1; i++) {
       current->value = listValues[length - i];
-      printf("i: %d, val: %d\n", i, current->value);
       current = current->next;
     }
   }
 
-  return current;
+  return first;
 }
