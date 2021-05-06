@@ -8,6 +8,8 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
 
 #include "stack.h"
 #include "queue_from_stacks.h"
@@ -19,8 +21,13 @@
 struct queue_from_stacks* queue_from_stacks_create() {
   //This is the queue that will be returned
   struct queue_from_stacks* queue = malloc(sizeof(struct queue_from_stacks));
-  
+  queue->s1 = stack_create();
+  queue->s2 = stack_create();
+  assert(queue);
+  assert(queue->s1);
+  assert(queue->s2);
 
+  return queue;
 }
 
 /*
@@ -33,6 +40,14 @@ struct queue_from_stacks* queue_from_stacks_create() {
  */
 void queue_from_stacks_free(struct queue_from_stacks* queue) {
   assert(queue);
+
+  //Dequeue everything in s1 and s2
+  while (!stack_isempty(queue->s1)) {
+    stack_pop(queue->s1);
+  }
+  while (!stack_isempty(queue->s2)) {
+    stack_pop(queue->s2);
+  }
 
   //Free the 2 stacks inside the struct, then the struct itself
   stack_free(queue->s1);
@@ -52,7 +67,14 @@ void queue_from_stacks_free(struct queue_from_stacks* queue) {
  *   Should return 1 if the queue is empty or 0 otherwise.
  */
 int queue_from_stacks_isempty(struct queue_from_stacks* queue) {
-  return 1;
+  assert(queue);
+  //This one is simple enough that I don't think that an explanation is necessary
+  if (stack_isempty(queue->s1) && stack_isempty(queue->s2)) {
+    return 1;
+  }
+  else {
+    return 0;
+  }
 }
 
 /*
@@ -64,7 +86,17 @@ int queue_from_stacks_isempty(struct queue_from_stacks* queue) {
  *   value - the new value to be enqueueed onto the queue
  */
 void queue_from_stacks_enqueue(struct queue_from_stacks* queue, int value) {
-
+  assert(queue);
+  //Funnel all of s2 into s1. Now the list is upside-down.
+  while(!stack_isempty(queue->s2)) {
+    stack_push(queue->s1, stack_pop(queue->s2));
+  }
+  //Stick the new value into the now empty s2.
+  stack_push(queue->s2, value);
+  //Funnel all of s1 back into s2. Now the list is exactly how it was before, except now the new value is at the bottom of s2.
+  while(!stack_isempty(queue->s1)) {
+    stack_push(queue->s2, stack_pop(queue->s1));
+  }
 }
 
 /*
@@ -80,7 +112,8 @@ void queue_from_stacks_enqueue(struct queue_from_stacks* queue, int value) {
  *   Should return the value stored at the front of the queue.
  */
 int queue_from_stacks_front(struct queue_from_stacks* queue) {
-  return 0;
+  assert(queue);
+  return stack_top(queue->s2);
 }
 
 /*
@@ -96,5 +129,6 @@ int queue_from_stacks_front(struct queue_from_stacks* queue) {
  *   is dequeued.
  */
 int queue_from_stacks_dequeue(struct queue_from_stacks* queue) {
-  return 0;
+  //Because of the way that I set up the enqueue, the oldest element will be on the top of the s2 stack
+  return stack_pop(queue->s2);
 }
